@@ -75,4 +75,45 @@ const deleteFour = async (req, res) => {
     }
 };
 
+const FournisseurDetails = (res, req) => {
+    try{
+        const  id = req.params.id;
+        const fourn = fournisseur.findOne({id});
+        if(!fourn)
+            return resMessage(res, 404, "not found!")
+        const totalFacte = facteur.countDocuments({fournisseurId: id});
+
+        //paid
+        const totalPai =  facteur.countDocuments({_id: id, status: "paid"});
+
+        //unpaid
+        const totalUnpai = facteur.countDocuments({_id: id, status: "unpaid"});
+
+        //amount total
+        const factes = facteur.findById(id);
+        let totalAmount = 0;
+        for (const el of factes) {
+            totalAmount =+ el.amount;
+        }
+
+        //amount total paye
+        const factesUnpaid = facteur.find({id, status: "paid"});
+        let amountpaid = 0;
+        for (const el of factes) {
+            amountpaid =+ el.amount;
+        }
+
+        resData(res, 200, {
+            fournisseur: fourn.name,
+            totalFactures: totalFacte,
+            paid: totalPai,
+            unpaid: totalUnpai,
+            montantTotal: totalAmount,
+            montantPaye: amountpaid
+        })
+    } catch(e) {
+        resMessage(res, 500, e.message);
+    }
+}
+
 module.exports = {addFourn, getFourn, getAllFourn, updatFour, deleteFour};
