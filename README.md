@@ -20,7 +20,7 @@ API backend sécurisée pour la gestion des factures fournisseurs, développée 
 
 ## Modèle de données
 
-![Diagramme de classes](class_diagram_vertical.png)
+<img width="600" height="1100" alt="Image" src="https://github.com/user-attachments/assets/e7ca8adc-094b-4900-9cd2-cdd45a0c6bcd" />
 
 **Relations :**
 - Un **User** possède plusieurs **Suppliers**
@@ -55,14 +55,3 @@ cp .env.example .env
 npm run dev
 ```
 
-## Variables d'environnement
-
-```
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017/invoice-api
-JWT_SECRET=your_secret_key
-```
-
-## Licence
-
-MIT
