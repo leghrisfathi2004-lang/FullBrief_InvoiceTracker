@@ -123,23 +123,43 @@ const dashboard = async (req, res) => {
     try {
         const userId = req.user.id;
 
-        const totalFacte = await facteur.countDocuments({ userId });
-        //paiments
-        const pais = await paiment.find({userId});
-        const totalSpent = pais.reduce ((t, p) => t+p.amount, 0);
-        //unpaid
-        const unpaidFacte = await facture.countDocuments({ userId, status: "unpaid"});
-        //paid
-        const paidFacte = await facture.countDocuments({ userId, status: "paid"});
-        resData(res, 200, {totalFacte, unpaidFacte, paidFacte, partially_paid: totalFacte-paidFacte-unpaidFacte, totalSpent,})
+        const totalInvoices = await facteur.countDocuments({ userId });
+        const unpaidInvoices = await facteur.countDocuments({ userId, status: "unpaid" });
+        const paidInvoices = await facteur.countDocuments({ userId, status: "paid" });
+        const partialInvoices = await facteur.countDocuments({ userId, status: "partially_paid" });
 
+        const pais = await paiment.find({ userId });
+        const totalSpent = pais.reduce((t, p) => t + p.amount, 0);
 
-} catch(e) {
-    resMessage(res, 500, e.message);
+        const overdueInvoices = await facteur.countDocuments({
+            userId,
+            status: { $ne: "paid" },
+            dueDate: { $lt: new Date() }
+        });
+
+        const recentPayments = await paiment
+            .find({ userId })
+            .sort({ payDate: -1 })
+            .limit(5)
+            .populate("facteurId", "amount dueDate status");
+
+        const supplierCount = await fournisseur.countDocuments({ userId });
+
+        resData(res, 200, {
+            totalInvoices,
+            paidInvoices,
+            unpaidInvoices,
+            partialInvoices,
+            overdueInvoices,
+            totalSpent,
+            supplierCount,
+            recentPayments,
+        });
+    } catch(e) {
+        resMessage(res, 500, e.message);
+    }
 }
 
-}
-
-module.exports = {register, login, profile, deleteUser, getAllUsers}
+module.exports = {register, login, profile, deleteUser, getAllUsers, dashboard}
 
 // |--> Helper functions

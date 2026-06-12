@@ -4,7 +4,8 @@ const {paiment, facteur} = require('../database/module.js');
 const addPaiment = async (req, res) => {
     try{
         const userId = req.user.id;
-        const {amount, facteurId} = req.body;
+        const facteurId = req.params.id;
+        const { amount } = req.body;
         const facte = await facteur.findById(facteurId);
 
         if(!amount || !facteurId || !facte || amount <= 0)

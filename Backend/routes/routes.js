@@ -6,7 +6,7 @@ const router = express.Router();
 const {auth, authAdmine} = require('../middleware/auth.js');
 
 //USER-------------------------------
-const {register, login, profile, deleteUser, getAllUsers} = require('../controllers/users.controller.js');
+const {register, login, profile, deleteUser, getAllUsers, dashboard} = require('../controllers/users.controller.js');
 //FOURNISSEUR-----------------------
 const {addFourn, getFourn, getAllFourn, updatFour, deleteFour} = require('../controllers/fournisseur.controller.js');
 //FACTEUR---------------------------
@@ -14,14 +14,15 @@ const {addFacteur, getFacte, getAllFactes, updateFacte, deleteFacte} = require('
 //PAIMENT---------------------------
 const { addPaiment, getPaiment} = require('../controllers/paiments.controller.js');
 //VALIDATIONS------------------------
-const {validUser, validFourni, validFacteur, validPay } = require("../middleware/validate.js");
+const {validUser, validLogin, validFourni, validFacteur, validPay } = require("../middleware/validate.js");
 //OWNERSHIP------------------------------
 const {ownerFacte, ownerFourn} = require('../middleware/owner.js');
 
 //crud users
 router.post("/api/auth/register", validUser, register);
-router.post("/api/auth/login", validUser, login);
-router.get("/api/auth/me", auth, profile);//check later
+router.post("/api/auth/login", validLogin, login);
+router.get("/api/auth/me", auth, profile);
+router.get("/api/dashboard", auth, dashboard);
 
 //crud fournisseurs
 router.post('/api/suppliers', auth, validFourni, addFourn);

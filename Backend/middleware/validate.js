@@ -7,7 +7,18 @@ const validUser = (req, res, next) => {
         email: joi.string().email().required(),
         password: joi.string().min(6).required()
     });
-     const { error } = userShema.validate(req.body);
+    const { error } = userShema.validate(req.body);
+    if (error)
+        return resMessage(res, 400, error.details[0].message);
+    next();
+}
+
+const validLogin = (req, res, next) => {
+    const loginSchema = joi.object({
+        email: joi.string().email().required(),
+        password: joi.string().min(6).required()
+    });
+    const { error } = loginSchema.validate(req.body);
     if (error)
         return resMessage(res, 400, error.details[0].message);
     next();
@@ -40,14 +51,13 @@ const validFacteur = (req, res, next) => {
 
 const validPay = (req, res, next) => {
     const payShema = joi.object({
-        amount: joi.number().positive().required(),
-        factuerId: joi.string().required()
-        //userId in req.user
+        amount: joi.number().positive().required()
+        //facteurId comes from URL param, userId from req.user
     });
-    const { er } = payShema.validate(req.body);
-    if (er) 
-        return resMessage(res, 400, er.details[0].message);
+    const { error } = payShema.validate(req.body);
+    if (error)
+        return resMessage(res, 400, error.details[0].message);
     next();
 }
 
-module.exports = {validUser, validFourni, validFacteur, validPay };
+module.exports = {validUser, validLogin, validFourni, validFacteur, validPay };

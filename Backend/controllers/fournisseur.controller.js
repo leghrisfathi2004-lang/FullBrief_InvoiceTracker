@@ -28,7 +28,7 @@ const getFourn = async (req, res) => {
 
 const getAllFourn = async (req, res) => {
     try{
-        const resultat = await fournisseur.find({});
+        const resultat = await fournisseur.find({ userId: req.user.id });
         if(!resultat.length)
             return resMessage(res, 200, "fournisseur list are empty!");
         return resData(res, 200, resultat);
